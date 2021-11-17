@@ -18,4 +18,7 @@ class AmzspiderItem(scrapy.Item):
     format = scrapy.Field()
     productDetail = scrapy.Field()
     additionalOptions = scrapy.Field()  # DVD1, DVD2, etc.
+
+    comment = scrapy.Field()
+    style = scrapy.Field()
     pass
