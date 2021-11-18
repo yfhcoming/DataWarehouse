@@ -13,7 +13,7 @@ class AmzspiderItem(scrapy.Item):
     title = scrapy.Field()
     otherFormat = scrapy.Field()  # DVD, VHS Tape, etc.
 
-    primeMeta = scrapy.Field()  # only in prime video
+
 
     format = scrapy.Field()
     productDetail = scrapy.Field()
@@ -21,4 +21,9 @@ class AmzspiderItem(scrapy.Item):
 
     comment = scrapy.Field()
     style = scrapy.Field()
+
+    mainActors = scrapy.Field()
+
+    primeMeta = scrapy.Field()  # only in prime video
+    primeDetail = scrapy.Field()  # only in prime video
     pass

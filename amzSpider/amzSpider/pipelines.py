@@ -9,6 +9,7 @@ import codecs
 import json
 
 from itemadapter import ItemAdapter
+from scrapy.exceptions import DropItem
 
 
 class AmzspiderPipeline:
@@ -20,6 +21,14 @@ class AmzspiderPipeline:
         print("-------------pipeline done")
         lines = json.dumps(dict(item), ensure_ascii=False) + "\n"
         self.file.write(lines)
+
+        if 'title' not in item:
+            with open('pidbad.txt', 'a', encoding='utf-8') as f:
+                f.write(item['pid'] + '\n')
+            raise DropItem(item['pid'] + ' parse failed')
+        with open('pidok.txt', 'a', encoding='utf-8') as f:
+            f.write(item['pid'] + '\n')
+
         return item
 
     def spider_closed(self, spider):
