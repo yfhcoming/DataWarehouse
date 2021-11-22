@@ -27,7 +27,7 @@ class amzSpider(scrapy.Spider):
                 pid = pid.strip()
                 # if pid in ok or pid in bad:
                 #     continue
-                yield scrapy.Request(url='https://www.amazon.com/dp/' + pid,
+                yield scrapy.Request(url='http://www.amazon.com/dp/' + pid,
                                      callback=self.parse,
                                      meta={'pid': pid,
                                            #    'cookiejar': random.randint(0, 31),
@@ -39,11 +39,17 @@ class amzSpider(scrapy.Spider):
                                          'Accept-Language': 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,zh-TW;q=0.6', })
 
     def parse(self, response):
-        print("------------------parse start")
+        # print("------------------parse start")
         pid = response.meta['pid']
+        print (response.url)
+        print (response.body)
         pi = AmzspiderItem()
         pi['pid'] = pid
-        pi['title'] = response.xpath('//meta[@name="title"]/@content').extract()[0]
+
+        print("------------------parse intro 1 ")
+        pi['title'] = response.xpath('//meta[@name="title"]/@content').extract()
+        print (pi['title'])
+        print("------------------parse intro 2 ")
 
         try:
 
@@ -153,7 +159,7 @@ class amzSpider(scrapy.Spider):
                     asin = re.search('/dp/(\w+)/', additionalOptionHref).group(1)
                     pi['additionalOptions'].append(asin)
 
-                print("------------------parse additionalOptions")
+                # print("------------------parse additionalOptions")
 
 
                 pi['productDetail'] = {}
@@ -164,35 +170,35 @@ class amzSpider(scrapy.Spider):
                     value = detailName.xpath('../span[last()]/text()').extract()[0]
                     pi['productDetail'][key] = value
 
-                print("------------------parse productDetail")
+                # print("------------------parse productDetail")
 
 
                 commentList = []
                 commentInfos = response.xpath('//*[@id="cm-cr-dp-review-list"]//div[@data-hook="review"][position()<=2]')
                 for commentInfo in commentInfos:
                     reviewerId = commentInfo.xpath('./@id').extract()[0]
-                    print("------------------parse reviewerId")
+                    # print("------------------parse reviewerId")
                     reviewerName = commentInfo.xpath('.//span[contains(@class,"a-profile-name")]//text()').extract()[0]
-                    print("------------------parse reviewerName")
+                    # print("------------------parse reviewerName")
                     overall = commentInfo.xpath('.//i[@data-hook="review-star-rating"]/span//text()').extract()[0][0:3]
-                    print("------------------parse overall")
+                    # print("------------------parse overall")
                     reviewTime = commentInfo.xpath('.//span[@data-hook="review-date"]//text()').extract()[0]
                     reviewTime = reviewTime.split('on')[1][1:]
-                    print("------------------parse reviewTime")
+                    # print("------------------parse reviewTime")
                     # reviewTime = reviewTime.split(' ')
                     # reviewTime[0] = list(calendar.month_name).index(reviewTime[0])
                     # reviewTime[1] = reviewTime[0]
                     # Time = reviewTime[0]+' '+reviewTime[1]+' '+reviewTime[2]
                     reviewTextSpan = commentInfo.xpath('.//div[@data-hook="review-collapsed"]/span')
                     reviewText = reviewTextSpan.xpath('string(.)').extract()[0]
-                    print("------------------parse reviewText")
+                    # print("------------------parse reviewText")
                     summary = commentInfo.xpath('.//a[@data-hook="review-title"]/span//text()').extract()[0]
-                    print("------------------parse summary")
+                    # print("------------------parse summary")
                     helpfulness = ""
                     helpfulnesses = commentInfo.xpath('.//span[@data-hook="helpful-vote-statement"]')
                     for h in helpfulnesses:
                         helpfulness = h.xpath('.//text()').extract()[0]
-                    print("------------------parse helpfulness")
+                    # print("------------------parse helpfulness")
 
                     # pi['otherFormat'] = []
                     # otherFormatHrefs = response.xpath(
@@ -229,9 +235,7 @@ class amzSpider(scrapy.Spider):
                     # primeMeta=pi['primeMeta'],  # only in prime video
 
                 )
-
                 print("------------------parse done")
-
                 yield item
 
         except:

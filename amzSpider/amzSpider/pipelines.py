@@ -15,7 +15,7 @@ from scrapy.exceptions import DropItem
 class AmzspiderPipeline:
 
     def __init__(self):
-        self.file = codecs.open('article.json', 'wb+', encoding="utf-8")
+        self.file = codecs.open('movieInfo.json', 'wb+', encoding="utf-8")
 
     def process_item(self, item, spider):
         print("-------------pipeline done")

@@ -31,16 +31,17 @@ ROBOTSTXT_OBEY = False
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-#COOKIES_ENABLED = False
+# COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-#DEFAULT_REQUEST_HEADERS = {
-#   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-#   'Accept-Language': 'en',
-#}
+# EFAULT_REQUEST_HEADERS = {
+#     'Upgrade-Insecure-Requests': 1,
+#     'Pragma': 'no-cache',
+#     'Cache-Control': 'no-cache',
+# }
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
@@ -50,9 +51,25 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'amzSpider.middlewares.AmzspiderDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    # 'captchabuster.RobotMiddleware': 90,
+    # 'scrapy.contrib.downloadermiddleware.robotstxt.RobotsTxtMiddleware': 100,
+    # 'scrapy.contrib.downloadermiddleware.httpauth.HttpAuthMiddleware': 300,
+    # 'scrapy.contrib.downloadermiddleware.downloadtimeout.DownloadTimeoutMiddleware': 350,
+    # 'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': 400,
+    # 'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': 500,
+    # 'amzSpider.middlewares.ProxyMiddleware.ProxyMiddleware': 501,
+    'amzSpider.middlewares.UserAgentMiddleware.UserAgentMiddleware': 502,
+    # 'scrapy.contrib.downloadermiddleware.defaultheaders.DefaultHeadersMiddleware': 550,
+    # 'scrapy.contrib.downloadermiddleware.redirect.MetaRefreshMiddleware': 580,
+    # 'scrapy.contrib.downloadermiddleware.httpcompression.HttpCompressionMiddleware': 590,
+    # 'scrapy.contrib.downloadermiddleware.redirect.RedirectMiddleware': 600,
+    # 'scrapy.contrib.downloadermiddleware.cookies.CookiesMiddleware': 700,
+    # 'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 750,
+    # 'scrapy.contrib.downloadermiddleware.chunked.ChunkedTransferMiddleware': 830,
+    # 'scrapy.contrib.downloadermiddleware.stats.DownloaderStats': 850,
+    # 'scrapy.contrib.downloadermiddleware.httpcache.HttpCacheMiddleware': 900,
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -86,3 +103,8 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+# CONCURRENT_REQUESTS = 16
+# DOWNLOAD_DELAY = 0.1
+# CONCURRENT_REQUESTS_PER_DOMAIN = 16
+# CONCURRENT_REQUESTS_PER_IP = 16
