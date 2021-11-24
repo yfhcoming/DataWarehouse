@@ -1,10 +1,11 @@
 # -*- coding:UTF-8 -*-
 import jsonlines as jsonlines
-import io
+from bs4 import BeautifulSoup
+import requests
 
 
 asinSet = set()
-with open("Movies.json") as movies , io.open('pid.txt', 'w', encoding="utf-8") as f:
+with open("Movies.json") as movies , open('pid.txt', 'w', encoding="utf-8") as f:
 
     for line in jsonlines.Reader(movies):
         try:
