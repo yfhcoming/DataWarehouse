@@ -6,14 +6,6 @@ from bs4 import BeautifulSoup
 import time
 from fake_useragent import UserAgent
 
-proxyMeta = ""
-
-proxies = {
-        "http": proxyMeta,
-        "https": proxyMeta,
-}
-
-
 ua = UserAgent()
 
 file_name = '../dataProcess/data/rawData/test.csv'
@@ -31,14 +23,16 @@ headers = {
 
 # 随机ip代理获取
 PROXY_POOL_URL = 'http://localhost:5555/random'
+
+
 def get_proxy():
     try:
         response = requests.get(PROXY_POOL_URL)
         if response.status_code == 200:
-            print(response.text)
             return response.text
     except ConnectionError:
         return None
+
 
 def thread_loop(t_id, t_max):
     # 读取p_id
@@ -50,13 +44,18 @@ def thread_loop(t_id, t_max):
             while attempts < 5 and not success:
                 try:
                     while True:
-                        url = base_url + p_id
                         proxyMeta = get_proxy()
-                        result = requests.get(url, proxies=proxies, headers=headers)
+                        proxies = {
+                            "http": 'http://'+proxyMeta,
+                            "https": 'https://'+proxyMeta,
+                        }
+                        url = base_url + p_id
+                        result = requests.get(url, headers=headers, verify=False)
                         result = result.text.encode('gbk', 'ignore').decode('gbk')
                         soup = BeautifulSoup(result, 'lxml')
                         movie_title = str(soup.select('title')[0].getText())
-                        if (movie_title != 'Robot Check') and (movie_title != 'Sorry! Something went wrong!') and (movie_title != 'Amazon.com'):
+                        if (movie_title != 'Robot Check') and (movie_title != 'Sorry! Something went wrong!') and (
+                                movie_title != 'Amazon.com'):
                             print('[t_id]: ', t_id, " [p_id]:", p_id)
                             fo = open(web_dir + p_id + ".html", "w")
                             fo.write(result)
@@ -76,5 +75,5 @@ def thread_loop(t_id, t_max):
 if __name__ == '__main__':
     for t_id in range(threads_num):
         print('[Thread]:', t_id, ' begins')
-        t = Thread(target=thread_loop, args=(t_id,threads_num,))
+        t = Thread(target=thread_loop, args=(t_id, threads_num,))
         t.start()
