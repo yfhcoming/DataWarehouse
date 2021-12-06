@@ -6,8 +6,9 @@ import numpy as np
 from bs4 import BeautifulSoup
 import pickle
 import os
+import csv
 
-from utils.unionFind import UnionFind
+from unionFind import UnionFind
 
 
 class MoviePreProcess(object):
@@ -50,26 +51,31 @@ class MoviePreProcess(object):
             if index % 10 == 0:
                 print('[index]: ', index, '[components]: ', self._uf_set.n_comps, '[elements]: ', self._uf_set.n_elts)
             ct_id = file_name.split('.')[0][-10:]
+            if ct_id not in unuse_list:
+                    # 解析html文件
+                    try:
+                        content = open(self._file_path + '/' + file_name, 'r',encoding="utf-8").read()
+                        soup = BeautifulSoup(content, 'lxml')
+                    except:
+                        continue
+                    try:
+                        a_list = soup.find(id="MediaMatrix").find_all('a')
 
-            # 解析html文件
-            content = open(self._file_path + '/' + file_name, 'r',encoding="utf-8").read()
-            soup = BeautifulSoup(content, 'lxml')
-            try:
-                a_list = soup.find(id="MediaMatrix").find_all('a')
+                        # 相同id列表
+                        pre_id = ''
 
-                # 相同id列表
-                pre_id = ''
-
-                # 遍历a_list
-                for a_tag in a_list:
-                    href = a_tag['href']
-                    if len(href.split('/dp/')) > 1:
-                        cor_id = href.split('/dp/')[1][0:10]
-                        if cor_id != pre_id and cor_id in self._id_list:
-                            pre_id = cor_id
-                            self._uf_set.union(ct_id, cor_id)
-            except:
-                self._error_id_list.append(ct_id)
+                        # 遍历a_list
+                        for a_tag in a_list:
+                            href = a_tag['href']
+                            if len(href.split('/dp/')) > 1:
+                                cor_id = href.split('/dp/')[1][0:10]
+                                if cor_id != pre_id and cor_id in self._id_list:
+                                    pre_id = cor_id
+                                    self._uf_set.union(ct_id, cor_id)
+                    except:
+                        self._error_id_list.append(ct_id)
+            else:
+                continue
 
         print('[components]: ', self._uf_set.n_comps, '[elements]: ', self._uf_set.n_elts)
         self.save_uf(self._save_path + '/component_mapping.pickle')
@@ -78,16 +84,21 @@ class MoviePreProcess(object):
 
 
 if __name__ == '__main__':
-    path = 'D:/Code/CodeWareHouse/py/webPages/pages'  # 待读取文件的文件夹绝对地址
+    path = '/Users/spica/data/webPages'  # 待读取文件的文件夹绝对地址
     id_file_path = '../data/id_list.csv'
     error_path = '../data'
     save_path = '../data/UFMap'
+
+    pid_use_target_path = '../data/unusepid.csv'
+    unuse_list = []
+    with open(pid_use_target_path, "r") as f:
+        reader = csv.DictReader(f)
+        have = 0
+        for row in reader:
+            unuse_list.append(row['pid'])
+
     f_list = os.listdir(path)  # 获得文件夹中所有文件的名称列表
 
     mp = MoviePreProcess(file_list=f_list, file_path=path, id_list_file=id_file_path, error_path=error_path,
                          save_path=save_path)
     mp.build_cor_id()
-
-
-
-
