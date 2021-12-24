@@ -12,16 +12,11 @@ pages_check = '/Users/spica/data/pages_check.txt'
 
 class MovieExtract:
 
-    def __init__(
-            self,
-            page_dir_path='/Users/spica/data/webPages',
-            uf_path='./crawlForHtml/request/dataProcess/data/UFMap/component_mapping.pickle',
-            labels_path='./crawlForHtml/request/dataProcess/data/extraData/labels.csv',
-            target_path='./crawlForHtml/request/dataProcess/data/rawData/movies.csv',
-    ):
-        """
-        初始化
-        """
+    def __init__(self, page_dir_path, uf_path):
+        self.page_dir_path=page_dir_path,  # 网页存放路径
+        self.uf_path=uf_path,  # 并查集路径
+        self.labels_path='../.././data/labels.csv',  # 电影标签文件路径
+        self.target_path='../.././data/movies.csv',  # movieExtract结果
         self.page_dir_path = page_dir_path  # 网页数据的文件夹路径
         self.uf_path = uf_path  # 并查集的文件路径
         self.labels_path = labels_path  # 电影风格文件路径
@@ -61,8 +56,8 @@ class MovieExtract:
                     # PrimeVideo是版本唯一的，不需要使用并查集
                     try:
                         node_list = \
-                        html.xpath('/html/body/div[1]/div[2]/div[4]/div/div/div[2]/div[2]/div/div[3]/div/div')[
-                            0].xpath('dl')
+                            html.xpath('/html/body/div[1]/div[2]/div[4]/div/div/div[2]/div[2]/div/div[3]/div/div')[
+                                0].xpath('dl')
                         release_time = html.xpath('.//span[@data-automation-id="release-year-badge"]/text()')[0]
                         self.movie_dict['release_time'] = release_time
                         for node in node_list:
@@ -111,7 +106,14 @@ class MovieExtract:
             self.movie_df.to_csv(self.target_path, mode='a', index=False, header=False)
             break
 
-        # merge title df
+        # 过滤labelExtract中去掉的非电影数据
+        pid_use_target_path = '../.././data/unusepid.csv'
+        unuse_list = []
+        with open(pid_use_target_path, "r") as f:
+            reader = csv.DictReader(f)
+            have = 0
+            for row in reader:
+                unuse_list.append(row['pid'])
 
     def get_actors(self, node, page_type):
         """
@@ -151,8 +153,11 @@ class MovieExtract:
         """
         获取电影风格
         """
-        data = self.label_df.loc[self.label_df['p_id'] == p_id]
-        self.movie_dict['label_list'] = eval(data.iloc[0]['labels'])
+        try:
+            data = self.label_df.loc[self.label_df['p_id'] == p_id]
+            self.movie_dict['label_list'] = eval(data.iloc[0]['labels'])
+        except KeyError as e:
+            pass;
 
     def get_title(self, html):
         """
@@ -204,14 +209,3 @@ class MovieExtract:
         self.movie_df.loc[self.movie_df.size] = self.movie_dict
         self.movie_dict = {}
 
-
-if __name__ == '__main__':
-    pid_use_target_path = './crawlForHtml/request/dataProcess/data/unusepid.csv'
-    unuse_list = []
-    with open(pid_use_target_path, "r") as f:
-        reader = csv.DictReader(f)
-        have = 0
-        for row in reader:
-            unuse_list.append(row['pid'])
-    movie_extract = MovieExtract()
-    movie_extract.run()
