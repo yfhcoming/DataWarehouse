@@ -2,6 +2,11 @@ import argparse
 import pandas as pd
 import os
 import pickle
+from extract.labelExtract import LabelExtract
+from extract.movieExtract import MovieExtract
+from extract.reviewExtract import ReviewExtract
+from transform.movieTransform import MovieTransform
+from transform.reviewTransform import ReviewTransform
 
 
 def get_args():
@@ -23,7 +28,8 @@ def get_args():
     parser.add_argument('--review-extract', dest='review_extract', action='store_true', help='extract review data')
     # 从网页抽取电影相关数据，筛选得到movies.csv
     parser.add_argument('--movie-extract', dest='movie_extract', action='store_true', help='extract movie data')
-    parser.add_argument('--review-transform', dest='review_transform', action='store_true', help='transform review data')
+    parser.add_argument('--review-transform', dest='review_transform', action='store_true',
+                        help='transform review data')
     parser.add_argument('--movie-transform', dest='movie_transform', action='store_true', help='transform review data')
     # 解析参数——使用 parse_args() 解析添加的参数
     return parser.parse_args()
@@ -37,29 +43,40 @@ if __name__ == '__main__':
     if args.label_extract:
         # 检查若路径不存在则退出
         assert os.path.exists(args.page_dir_path)
+        print('============================================')
         print('Extract label Data from' + args.page_dir_path)
-        label_extract = labelExtract(args.page_dir_path)
+        print('============================================')
+        label_extract = LabelExtract(args.page_dir_path)
         label_extract.run()
 
     if args.review_extract:
         assert os.path.exists(args.raw_data_path)
         assert os.path.exists(args.uf_path)
+        print('============================================')
         print('Extract review data from ' + args.raw_data_path)
+        print('============================================')
         review_extract = ReviewExtract(args.raw_data_path, args.uf_path)
         review_extract.run()
 
     if args.movie_extract:
         assert os.path.exists(args.page_dir_path)
         assert os.path.exists(args.uf_path)
+        print('============================================')
         print('Extract movie data from ' + args.page_dir_path)
+        print('============================================')
         movie_extract = MovieExtract(args.page_dir_path, args.uf_path)
         movie_extract.run()
 
     if args.review_transform:
         assert os.path.exists('.././data/reviews.csv')
+        print('============================================')
+        print('Start transforming review')
+        print('============================================')
         review_transform = ReviewTransform()
 
     if args.movie_transform:
         assert os.path.exists('.././data/reviews.csv')
+        print('============================================')
+        print('Start transforming movie')
+        print('============================================')
         movie_transform = MovieTransform()
-

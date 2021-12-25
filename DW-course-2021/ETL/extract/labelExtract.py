@@ -5,12 +5,12 @@ import pandas as pd
 import csv
 
 
-class labelExtract:
+class LabelExtract:
 
     def __init__(self, page_dir_path):
         self.page_dir_path = page_dir_path
-        self.target_path = '../.././data/labels.csv'
-        self.pid_use_target_path = '../.././data/unusepid.csv'
+        self.target_path = '.././data/labels.csv'
+        self.pid_use_target_path = '.././data/unusepid.csv'
 
     def run(self):
         label_df = pd.DataFrame(
@@ -53,7 +53,7 @@ class labelExtract:
                 label_df.loc[label_df.size] = label_dict
                 label_dict = {}
                 if index % 20 == 0:
-                    label_df.to_csv(target_path, mode='a', index=False, header=False)
+                    label_df.to_csv(self.target_path, mode='a', index=False, header=False)
                     label_df = label_df.drop(index=label_df.index)
 
             label_df.to_csv(target_path, mode='a', index=False, header=False)

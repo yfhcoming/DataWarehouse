@@ -32,7 +32,7 @@ class ReviewExtract:
 
                 for line in jsonlines.Reader(file):
                     sum += 1
-                    if ('asin' in line):
+                    if 'asin' in line:
                         new_asin = line['asin']
                         with open(pid_use_target_path, "r") as f:
                             reader = csv.DictReader(f)
@@ -46,43 +46,43 @@ class ReviewExtract:
                                 buffer = []
                                 while len(buffer) < 7 and line:
                                     if len(buffer) == 0:
-                                        if ('asin' in line):
+                                        if 'asin' in line:
                                             asin = line['asin']
                                         else:
                                             asin = ''
                                         buffer.append(asin)
                                     elif len(buffer) == 1:
-                                        if ('reviewerID' in line):
+                                        if 'reviewerID' in line:
                                             reviewerID = line['reviewerID']
                                         else:
                                             reviewerID = ''
                                         buffer.append(reviewerID)
                                     elif len(buffer) == 2:
-                                        if ('reviewerName' in line):
+                                        if 'reviewerName' in line:
                                             reviewerName = line['reviewerName']
                                         else:
                                             reviewerName = ''
                                         buffer.append(reviewerName)
                                     elif len(buffer) == 3:
-                                        if ('overall' in line):
+                                        if 'overall' in line:
                                             overall = line['overall']
                                         else:
                                             overall = ''
                                         buffer.append(overall)
                                     elif len(buffer) == 4:
-                                        if ('reviewTime' in line):
+                                        if 'reviewTime' in line:
                                             reviewTime = line['reviewTime']
                                         else:
                                             reviewTime = ''
                                         buffer.append(reviewTime)
                                     elif len(buffer) == 5:
-                                        if ('summary' in line):
+                                        if 'summary' in line:
                                             summary = line['summary']
                                         else:
                                             summary = ''
                                         buffer.append(summary)
                                     elif len(buffer) == 6:
-                                        if ('reviewText' in line):
+                                        if 'reviewText' in line:
                                             reviewText = line['reviewText']
                                         else:
                                             reviewText = ''
@@ -94,7 +94,7 @@ class ReviewExtract:
                                 if block_num % 10000 == 0:
                                     self.df.to_csv(self.target_path, mode='a', index=False, header=False)
                                     self.init_df()
-                    if (sum % 1000 == 0):
+                    if sum % 1000 == 0:
                         print(sum)
                         print(n)
             except:
